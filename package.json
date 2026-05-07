@@ -1,0 +1,13 @@
+{
+  "name": "wedding-invite-2026",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "preview": "vite preview --port 5174"
+  },
+  "devDependencies": {
+    "vite": "^6.3.5"
+  }
+}
