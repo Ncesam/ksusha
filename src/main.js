@@ -168,7 +168,7 @@ function initQuiz() {
 
   setStep(1);
 
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     if (stepHasInvalid(currentStep)) {
@@ -188,10 +188,51 @@ function initQuiz() {
       }
     }
 
-    try {
-      localStorage.setItem("wedding_quiz_answer", JSON.stringify(payload));
+    const persistLocal = () => {
+      try {
+        localStorage.setItem("wedding_quiz_answer", JSON.stringify(payload));
+        return true;
+      } catch {
+        return false;
+      }
+    };
+
+    const apiBase =
+      typeof import.meta.env.VITE_API_URL === "string" ? import.meta.env.VITE_API_URL.trim() : "";
+
+    if (apiBase) {
+      const url = `${apiBase.replace(/\/$/, "")}/api/responses`;
+      try {
+        const res = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (res.ok) {
+          persistLocal();
+          setNote("Спасибо! Ответ отправлен.");
+          return;
+        }
+        persistLocal();
+        let msg = `Сервер ответил с кодом ${res.status}. Ответ сохранён только на этом устройстве.`;
+        try {
+          const errBody = await res.json();
+          if (errBody && typeof errBody.error === "string") msg = `${errBody.error} Ответ сохранён только на этом устройстве.`;
+        } catch {
+          /* ignore */
+        }
+        setNote(msg);
+        return;
+      } catch {
+        persistLocal();
+        setNote("Нет соединения с сервером. Ответ сохранён только на этом устройстве.");
+        return;
+      }
+    }
+
+    if (persistLocal()) {
       setNote("Сохранено на этом устройстве. Спасибо!");
-    } catch {
+    } else {
       setNote("Не удалось сохранить (проверь настройки браузера).");
     }
   });

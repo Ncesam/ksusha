@@ -104,6 +104,7 @@ body {
   position: relative;
   z-index: 1;
   isolation: isolate;
+  background: var(--cream);
   min-height: 100dvh;
   min-height: 100svh;
   width: 100%;
@@ -167,11 +168,12 @@ body {
 
 .page {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   max-width: var(--page-max);
   margin: 0 auto;
   padding: 0 18px 56px;
   padding-bottom: max(56px, env(safe-area-inset-bottom));
+  background: var(--cream);
 }
 
 [data-reveal] {
@@ -299,6 +301,13 @@ body {
   box-shadow: var(--shadow), var(--shadow-inset);
   border: 1px solid var(--border);
   position: relative;
+  isolation: isolate;
+}
+
+/* Абсолютный .section__key иначе перекрывает заголовки и текст (порядок отрисовки). */
+.panel > *:not(.section__key) {
+  position: relative;
+  z-index: 1;
 }
 
 .panel--location {
@@ -309,8 +318,10 @@ body {
   position: absolute;
   top: 12px;
   right: 14px;
+  z-index: 0;
   color: var(--gold-deep);
   opacity: 0.55;
+  pointer-events: none;
 }
 
 .section__key--flip {
@@ -350,56 +361,67 @@ body {
   color: var(--muted);
 }
 
-.timing-placeholder {
-  font-style: italic;
-}
-
 .closing {
   margin-bottom: 18px;
 }
 
 .timeline {
-  position: relative;
-  min-height: 120px;
-  margin-top: 8px;
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.timeline--muted {
-  opacity: 0.45;
+.timeline__item {
+  display: grid;
+  grid-template-columns: 82px 1fr;
+  align-items: center;
+  column-gap: 14px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background: linear-gradient(135deg, rgba(255, 253, 248, 0.92), rgba(244, 241, 234, 0.55));
+  box-shadow: var(--shadow-inset);
+  border-left: 3px solid var(--gold);
 }
 
-.timeline__rail {
-  position: absolute;
-  left: 18px;
-  top: 8px;
-  bottom: 8px;
-  width: 2px;
-  background: linear-gradient(180deg, var(--gold), rgba(184, 154, 94, 0.25));
-  border-radius: 2px;
+.timeline__time {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 72px;
+  padding: 8px 10px;
+  margin: 0;
+  border-radius: 14px;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  background: rgba(255, 253, 248, 0.85);
+  border: 1px solid var(--border-gold);
 }
 
-.timeline__dot {
-  position: absolute;
-  left: 12px;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: var(--pearl);
-  border: 2px solid var(--gold);
-  box-shadow: 0 2px 8px rgba(74, 60, 49, 0.12);
+.timeline__body {
+  min-width: 0;
 }
 
-.timeline__dot:first-of-type {
-  top: 4px;
+.timeline__label {
+  font-size: 15px;
+  line-height: 1.35;
+  color: var(--ink-soft);
 }
 
-.timeline__dot--mid {
-  top: 50%;
-  margin-top: -7px;
-}
+@media (max-width: 520px) {
+  .timeline__item {
+    grid-template-columns: 1fr;
+    align-items: start;
+    row-gap: 10px;
+  }
 
-.timeline__dot:last-of-type {
-  bottom: 4px;
+  .timeline__time {
+    justify-content: flex-start;
+    width: fit-content;
+  }
 }
 
 .palette {
@@ -578,11 +600,15 @@ body {
 
 .section--quiz {
   margin-top: 32px;
+  position: relative;
+  z-index: 1;
 }
 
 .quiz {
   display: grid;
   gap: 12px;
+  position: relative;
+  z-index: 1;
 }
 
 .quiz__title {
@@ -870,6 +896,8 @@ body {
   display: grid;
   gap: 8px;
   justify-items: center;
+  position: relative;
+  z-index: 1;
 }
 
 .finale__word {
